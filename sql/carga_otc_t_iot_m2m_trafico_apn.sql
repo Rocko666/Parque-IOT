@@ -26,6 +26,7 @@ DROP TABLE IF EXISTS db_desarrollo2021.tmp_otc_t_iot_m2m_trafico_apn_sin_dup; --
 --BORRAR LA PARTICION DE LOS ULTIMOS CUATROS DIAS PROCESADAS
 ALTER TABLE db_desarrollo2021.otc_t_iot_m2m_trafico_apn DROP PARTITION (fecha_proceso=${fecha_proceso});  --db_reportes
 
+--	N01
 --CREA LA TABLA TEMPORAL DE IP DE FECHA MAS RECIENTES
 CREATE TABLE db_desarrollo2021.tmp_otc_t_ip_max --db_temporales
 TBLPROPERTIES ('transactional'='false', 'orc.compress'='SNAPPY','external.table.purge'='true')
@@ -36,6 +37,7 @@ SELECT
 FROM db_desarrollo2021.tmp_otc_t_ip --db_temporales
 GROUP BY num_telefonico;
 
+--N02
 --CREA LA TABLA TEMPORAL DE IP CON REGISTROS UNICOS
 CREATE TABLE db_desarrollo2021.tmp_otc_t_ip_uni --db_temporales
 TBLPROPERTIES ('transactional'='false', 'orc.compress'='SNAPPY','external.table.purge'='true')
@@ -53,6 +55,7 @@ a.ip_address,
 a.iccid,
 a.created_whem;
 
+--N03
 --CREA LA TABLA TEMPORAL DEL PARQUE IOT M2M
 CREATE TABLE db_desarrollo2021.tmp_otc_t_iot_m2m  --db_temporales
 TBLPROPERTIES ('transactional'='false', 'orc.compress'='SNAPPY','external.table.purge'='true')
@@ -73,6 +76,7 @@ FROM db_reportes.otc_t_360_general iotm2m
 WHERE ((iotm2m.fecha_proceso = ${fecha_proceso} AND iotm2m.es_parque='SI') or (fecha_movimiento_mes = ${fecha_proceso} and estado_abonado = 'BAA'))
 AND codigo_plan in(SELECT codigo_plan FROM db_reportes.otc_t_iot_plan_m2m);
 
+--N04
 --CREA LA TABLA TEMPORAL DEL PARQUE IOT M2M
 CREATE TABLE db_desarrollo2021.tmp_otc_t_iot_m2m_trafico_apn  --db_temporales
 TBLPROPERTIES ('transactional'='false', 'orc.compress'='SNAPPY','external.table.purge'='true')
@@ -120,6 +124,7 @@ tfapn.imsi,
 ip.iccid,
 iotm2m.fecha_proceso;
 
+--N05
 --CREA LA TABLA TEMPORAL DEL PARQUE IOT M2M SIN DUPLICADOS
 CREATE TABLE db_desarrollo2021.tmp_otc_t_iot_m2m_trafico_apn_sin_dup  --db_temporales
 TBLPROPERTIES ('transactional'='false', 'orc.compress'='SNAPPY','external.table.purge'='true')
@@ -165,6 +170,7 @@ imsi,
 iccid,
 fecha_proceso;
 
+--N06
 --INSERTA LOS REGISTROS EN LA TABLA OTC_T_IOT_M2M_TRAFICO_APN
 INSERT INTO TABLE db_desarrollo2021.otc_t_iot_m2m_trafico_apn PARTITION (fecha_proceso=${fecha_proceso}) --db_reportes
 SELECT

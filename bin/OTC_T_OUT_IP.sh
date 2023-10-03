@@ -76,21 +76,6 @@ fi
 echo "==== Inicia ejecucion del proceso extracion - Tabla OTC_T_OUT_IP ===="`date '+%Y%m%d%H%M%S'` >> $VAL_LOG
 echo "Fecha Ejecucion: $VAL_FECHA_EJEC" >> $VAL_LOG
 
-#EJECUTA EL DROP Y CREACION DE LA TABLA TEMPORAL
-echo "==== Ejecuta el drop y creacion de la tabla OTC_T_OUT_IP ===="`date '+%Y%m%d%H%M%S'` >> $VAL_LOG
-beeline -u $VAL_CADENA_JDBC -n $VAL_USUARIO --hiveconf tez.queue.name=$VAL_COLA_EJECUCION \
--f ${VAL_RUTA}/sql/carga_otc_t_ip.sql 2>> $VAL_LOG
-
-
-#VALIDA EL DROP y CREACION DE LA TABLA
-echo "==== Valida ejecucion del drop y creacion de la tabla OTC_T_OUT_IP ===="`date '+%Y%m%d%H%M%S'` >> $VAL_LOG
-if [ $? -ne 0 ]; then
-	echo "==== ERROR al realizar el drop y creacion de la tabla OTC_T_OUT_IP ===="`date '+%Y%m%d%H%M%S'` >> $VAL_LOG
-	exit 1
-	else
-	echo "==== OK - El drop y creacion de la tabla OTC_T_OUT_IP es EXITOSO ===="`date '+%Y%m%d%H%M%S'` >> $VAL_LOG
-fi
-
 #EXTRAE INFORMACION DE LA TABLA tmp_otc_t_ip
 echo "==== Inicia ejecucion del import - Tabla tmp_otc_t_ip ===="`date '+%Y%m%d%H%M%S'` >> $VAL_LOG
 

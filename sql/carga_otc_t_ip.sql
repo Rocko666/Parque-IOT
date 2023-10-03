@@ -14,10 +14,10 @@ SET hive.vectorized.execution.enabled=false;
 SET hive.vectorized.execution.reduce.enabled=false;
 
 --EJECUTA EL BORRADO DE LAS TABLAS TEMPORALES AL INICIO
-DROP TABLE IF EXISTS db_desarrollo2021.tmp_otc_t_ip ;
+DROP TABLE IF EXISTS db_desarrollo2021.tmp_otc_t_ip ;  --db_temporales
 
 --CREA TABLA TEMPORAL CON LA INFORMACION DEL CLIENTE CON SU TIPO DE DOCUMENTO
-CREATE TABLE db_desarrollo2021.tmp_otc_t_ip (
+CREATE TABLE db_desarrollo2021.tmp_otc_t_ip (  --db_temporales
   num_telefonico string comment 'Numero de telefono',
   ip_address varchar(40) comment 'Direccion IP', 
   iccid varchar(4000) comment 'Numero serial Sim',

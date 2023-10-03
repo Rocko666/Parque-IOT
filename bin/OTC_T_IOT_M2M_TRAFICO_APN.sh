@@ -81,7 +81,7 @@ VAL_FECHA_CARGA=$(date -d "$VAL_FECHA_EJEC -$i days" +"%Y%m%d");
 echo "==== Ejecuta HQL que carga_otc_t_iot_m2m_trafico_apn.sql ===="`date '+%Y%m%d%H%M%S'` >> $VAL_LOG
 beeline -u $VAL_CADENA_JDBC -n $VAL_USUARIO --hiveconf tez.queue.name=$VAL_COLA_EJECUCION \
 --hivevar pt_fecha=$VAL_FECHA_CARGA --hivevar fecha_proceso=$VAL_FECHA_CARGA \
--f ${VAL_RUTA}/sql/carga_otc_t_iot_m2m_trafico_apn.sql 2>> $VAL_LOG
+-f ${VAL_RUTA}/sql/\.sql 2>> $VAL_LOG
  ((i++))
 done
 
