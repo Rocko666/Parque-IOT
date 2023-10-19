@@ -1,36 +1,38 @@
 ## N01
-def tmp_otc_t_ip_max(fecha_meses_atras2,fecha_fin):
+def tmp_otc_t_ip_max(SchmTmp):
     qry="""
     SELECT 
         num_telefonico AS num_telefonico,  
         MAX(created_whem) AS created_whem
-    FROM db_desarrollo2021.tmp_otc_t_ip --db_temporales
+    FROM {SchmTmp}.tmp_otc_t_ip 
     GROUP BY num_telefonico
-    """.format(fecha_meses_atras2=fecha_meses_atras2,fecha_fin=fecha_fin)
+    """.format(SchmTmp=SchmTmp)
     print(qry)
     return qry
+
 ## N02
-def tmp_otc_t_ip_uni():
+def tmp_otc_t_ip_uni(SchmTmp):
     qry="""
     SELECT 
         a.num_telefonico AS num_telefonico, 
         a.ip_address AS ip_address, 
         a.iccid AS iccid, 
         a.created_whem AS created_whem
-    FROM db_desarrollo2021.tmp_otc_t_ip a --db_temporales
-    INNER JOIN db_desarrollo2021.tmp_otc_t_ip_max b -db_temporales
+    FROM {SchmTmp}.tmp_otc_t_ip a 
+    INNER JOIN tmp_otc_t_ip_max b 
         ON a.num_telefonico = b.num_telefonico 
-        AND a.created_whem = b.created_whem  -
+        AND a.created_whem = b.created_whem  
     GROUP BY 
         a.num_telefonico,
         a.ip_address,
         a.iccid,
         a.created_whem
-    """
+    """.format(SchmTmp=SchmTmp)
     print(qry)
     return qry
+
 ## N03
-def tmp_otc_t_iot_m2m(fecha_inicio,fecha_fin):
+def tmp_otc_t_iot_m2m(fecha_proceso):
     qry="""
     SELECT 
         iotm2m.num_telefonico as num_telefonico,
@@ -45,15 +47,16 @@ def tmp_otc_t_iot_m2m(fecha_inicio,fecha_fin):
         iotm2m.linea_negocio_homologado AS linea_negocio_homologado,
         iotm2m.fecha_proceso AS fecha_proceso
     FROM db_reportes.otc_t_360_general iotm2m
-    WHERE ((iotm2m.fecha_proceso = ${fecha_proceso} 
-    AND iotm2m.es_parque='SI') or (fecha_movimiento_mes = ${fecha_proceso} and estado_abonado = 'BAA'))
-    AND codigo_plan in
+    WHERE ((iotm2m.fecha_proceso = {fecha_proceso} 
+    AND iotm2m.es_parque='SI') or (fecha_movimiento_mes = '{fecha_proceso}' and estado_abonado = 'BAA'))
+    AND iotm2m.codigo_plan in
     (SELECT codigo_plan FROM db_reportes.otc_t_iot_plan_m2m)
-    """.format(fecha_inicio=fecha_inicio,fecha_fin=fecha_fin)
+    """.format(fecha_proceso=fecha_proceso)
     print(qry)
     return qry
-##N04
-def tmp_otc_t_iot_m2m_trafico_apn(vanio_mes):
+
+## N04
+def tmp_otc_t_iot_m2m_trafico_apn(fecha_proceso):
     qry="""
     SELECT 
         iotm2m.num_telefonico AS num_telefonico,
@@ -76,10 +79,10 @@ def tmp_otc_t_iot_m2m_trafico_apn(vanio_mes):
         tfapn.imsi AS imsi,
         ip.iccid AS iccid,
         iotm2m.fecha_proceso AS fecha_proceso
-    FROM db_desarrollo2021.tmp_otc_t_iot_m2m iotm2m --db_temporales
+    FROM tmp_otc_t_iot_m2m iotm2m 
     LEFT JOIN db_cmd.otc_t_dm_cur_t1_v2 tfapn 
-        ON (iotm2m.num_telefonico=tfapn.numeroorigen AND tfapn.activity_start_dt = ${fecha_proceso})
-    LEFT JOIN db_desarrollo2021.tmp_otc_t_ip_uni ip  --db_temporales
+        ON (iotm2m.num_telefonico=tfapn.numeroorigen AND tfapn.activity_start_dt = {fecha_proceso})
+    LEFT JOIN tmp_otc_t_ip_uni ip  
         ON iotm2m.num_telefonico = ip.num_telefonico 
     GROUP BY 
         iotm2m.num_telefonico,
@@ -99,12 +102,12 @@ def tmp_otc_t_iot_m2m_trafico_apn(vanio_mes):
         tfapn.imsi,
         ip.iccid,
         iotm2m.fecha_proceso
-    """.format(vanio_mes=vanio_mes)
+    """.format(fecha_proceso=fecha_proceso)
     print(qry)
     return qry
 
 ## N05
-def tmp_otc_t_iot_m2m_trafico_apn_sin_dup(fecha_meses_atras,fecha_fin):
+def tmp_otc_t_iot_m2m_trafico_apn_sin_dup(fecha_proceso):
     qry="""
     SELECT 
         num_telefonico AS num_telefonico,
@@ -127,8 +130,8 @@ def tmp_otc_t_iot_m2m_trafico_apn_sin_dup(fecha_meses_atras,fecha_fin):
         imsi AS imsi,
         iccid AS iccid,
         fecha_proceso AS fecha_proceso 
-    FROM db_desarrollo2021.tmp_otc_t_iot_m2m_trafico_apn  --db_temporales
-    where fecha_proceso between ${fecha_proceso} and ${fecha_proceso}
+    FROM tmp_otc_t_iot_m2m_trafico_apn  
+    where fecha_proceso between {fecha_proceso} and {fecha_proceso}
     GROUP BY 
         num_telefonico,
         fecha_alta,
@@ -146,12 +149,12 @@ def tmp_otc_t_iot_m2m_trafico_apn_sin_dup(fecha_meses_atras,fecha_fin):
         imsi,
         iccid,
         fecha_proceso
-    """.format(fecha_meses_atras=fecha_meses_atras,fecha_fin=fecha_fin)
+    """.format(fecha_proceso=fecha_proceso)
     print(qry)
     return qry
 
 ## N06
-def otc_t_iot_m2m_trafico_apn(tabla, anio_mes):
+def otc_t_iot_m2m_trafico_apn(fecha_proceso):
     qry="""
     SELECT
         num_telefonico,
@@ -172,8 +175,9 @@ def otc_t_iot_m2m_trafico_apn(tabla, anio_mes):
         mb_sin_tec,
         ip_address,
         imsi,
-        iccid
-    FROM db_desarrollo2021.tmp_otc_t_iot_m2m_trafico_apn_sin_dup
-    """.format(tabla=tabla, anio_mes=anio_mes)
-    #print(qry)
+        iccid,
+        {fecha_proceso} AS fecha_proceso
+    FROM tmp_otc_t_iot_m2m_trafico_apn_sin_dup
+    """.format(fecha_proceso=fecha_proceso)
+    print(qry)
     return qry  

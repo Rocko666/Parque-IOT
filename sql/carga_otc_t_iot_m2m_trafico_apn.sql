@@ -1,20 +1,3 @@
-------------------------------------------------------------------------------------------------------------------
--- NOMBRE: carga_otc_t_iot_m2m_trafico_apn.sql
--- DESCRIPCION:
---   HQL que ejecuta la creacion de la tabla temporal tmp_otc_t_nc_ip
---   HQL que ejecuta el proceso ETL para tomar la informacion del parque IOT M2M del trafico APN y su IP
---   para cargar en la tabla destino otc_t_iot_m2m_trafico_apn en Hive particionada por fecha de proceso
---   en formato YYYYMMDD
--- AUTOR: Gustavo Uzcategui - Softconsulting
--- FECHA CREACION: 2021-11-15
-------------------------------------------------------------------------------------------------------------------
--- MODIFICACIONES
--- FECHA         AUTOR                      DESCRIPCION MOTIVO
--- YYYY-MM-DD    NOMBRE Y APELLIDO          MOTIVO DEL CAMBIO
-------------------------------------------------------------------------------------------------------------------
---SET VARIABLES
-SET hive.vectorized.execution.enabled=false;
-SET hive.vectorized.execution.reduce.enabled=false;
 
 --EJECUTA EL BORRADO DE LAS TABLAS TEMPORALES AL INICIO
 DROP TABLE IF EXISTS db_desarrollo2021.tmp_otc_t_iot_m2m; --db_temporales
@@ -174,30 +157,24 @@ fecha_proceso;
 --INSERTA LOS REGISTROS EN LA TABLA OTC_T_IOT_M2M_TRAFICO_APN
 INSERT INTO TABLE db_desarrollo2021.otc_t_iot_m2m_trafico_apn PARTITION (fecha_proceso=${fecha_proceso}) --db_reportes
 SELECT
-	num_telefonico,
-	fecha_alta,
-	account_num,
-	identificacion_cliente,
-	nombre_cliente,
-	codigo_plan,
-	nombre_plan,
-	segmento,
-	sub_segmento,
-	linea_negocio_homologado,
-	numeroorigen,
-	apn,
-    mb_4g, 
-    mb_3g,
-    mb_2g,
-    mb_sin_tec,
-	ip_address,
-	imsi,
-	iccid
+num_telefonico,
+fecha_alta,
+account_num,
+identificacion_cliente,
+nombre_cliente,
+codigo_plan,
+nombre_plan,
+segmento,
+sub_segmento,
+linea_negocio_homologado,
+numeroorigen,
+apn,
+mb_4g, 
+mb_3g,
+mb_2g,
+mb_sin_tec,
+ip_address,
+imsi,
+iccid
  FROM db_desarrollo2021.tmp_otc_t_iot_m2m_trafico_apn_sin_dup;  --db_temporales
       
---EJECUTA EL BORRADO DE LAS TABLAS TEMPORALES AL INICIO
-DROP TABLE IF EXISTS db_desarrollo2021.tmp_otc_t_iot_m2m;  --db_temporales
-DROP TABLE IF EXISTS db_desarrollo2021.tmp_otc_t_iot_m2m_trafico_apn;  --db_temporales
-DROP TABLE IF EXISTS db_desarrollo2021.tmp_otc_t_ip_max;  --db_temporales
-DROP TABLE IF EXISTS db_desarrollo2021.tmp_otc_t_ip_uni;  --db_temporales
-DROP TABLE IF EXISTS db_desarrollo2021.tmp_otc_t_iot_m2m_trafico_apn_sin_dup;  --db_temporales
