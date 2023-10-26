@@ -1,27 +1,19 @@
 ## N01
-def tmp_otc_t_ip_max(SchmTmp):
-    qry="""
-    SELECT 
-        num_telefonico AS num_telefonico,  
-        MAX(created_whem) AS created_whem
-    FROM {SchmTmp}.tmp_otc_t_ip 
-    GROUP BY num_telefonico
-    """.format(SchmTmp=SchmTmp)
-    print(qry)
-    return qry
-
-## N02
 def tmp_otc_t_ip_uni(SchmTmp):
     qry="""
     SELECT 
         a.num_telefonico AS num_telefonico, 
         a.ip_address AS ip_address, 
         a.iccid AS iccid, 
-        a.created_whem AS created_whem
+        cast(a.created_whem as date) AS created_whem
     FROM {SchmTmp}.tmp_otc_t_ip a 
-    INNER JOIN tmp_otc_t_ip_max b 
+    INNER JOIN (SELECT 
+        num_telefonico AS num_telefonico,  
+        MAX(cast(created_whem as date)) AS created_whem
+    FROM {SchmTmp}.tmp_otc_t_ip 
+    GROUP BY num_telefonico) b 
         ON a.num_telefonico = b.num_telefonico 
-        AND a.created_whem = b.created_whem  
+        AND cast(a.created_whem as date) = cast(b.created_whem as date) 
     GROUP BY 
         a.num_telefonico,
         a.ip_address,
@@ -31,7 +23,7 @@ def tmp_otc_t_ip_uni(SchmTmp):
     print(qry)
     return qry
 
-## N03
+## N02
 def tmp_otc_t_iot_m2m(fecha_proceso):
     qry="""
     SELECT 
@@ -49,13 +41,13 @@ def tmp_otc_t_iot_m2m(fecha_proceso):
     FROM db_reportes.otc_t_360_general iotm2m
     WHERE ((iotm2m.fecha_proceso = {fecha_proceso} 
     AND iotm2m.es_parque='SI') or (fecha_movimiento_mes = '{fecha_proceso}' and estado_abonado = 'BAA'))
-    AND iotm2m.codigo_plan in
+    AND codigo_plan in
     (SELECT codigo_plan FROM db_reportes.otc_t_iot_plan_m2m)
     """.format(fecha_proceso=fecha_proceso)
     print(qry)
     return qry
 
-## N04
+## N03
 def tmp_otc_t_iot_m2m_trafico_apn(fecha_proceso):
     qry="""
     SELECT 
@@ -106,7 +98,7 @@ def tmp_otc_t_iot_m2m_trafico_apn(fecha_proceso):
     print(qry)
     return qry
 
-## N05
+## N04
 def tmp_otc_t_iot_m2m_trafico_apn_sin_dup(fecha_proceso):
     qry="""
     SELECT 
@@ -153,7 +145,7 @@ def tmp_otc_t_iot_m2m_trafico_apn_sin_dup(fecha_proceso):
     print(qry)
     return qry
 
-## N06
+## N05
 def otc_t_iot_m2m_trafico_apn(fecha_proceso):
     qry="""
     SELECT

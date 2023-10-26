@@ -1,3 +1,20 @@
+------------------------------------------------------------------------------------------------------------------
+-- NOMBRE: carga_otc_t_iot_m2m_trafico_apn.sql
+-- DESCRIPCION:
+--   HQL que ejecuta la creacion de la tabla temporal tmp_otc_t_nc_ip
+--   HQL que ejecuta el proceso ETL para tomar la informacion del parque IOT M2M del trafico APN y su IP
+--   para cargar en la tabla destino otc_t_iot_m2m_trafico_apn en Hive particionada por fecha de proceso
+--   en formato YYYYMMDD
+-- AUTOR: Gustavo Uzcategui - Softconsulting
+-- FECHA CREACION: 2021-11-15
+------------------------------------------------------------------------------------------------------------------
+-- MODIFICACIONES
+-- FECHA         AUTOR                      DESCRIPCION MOTIVO
+-- YYYY-MM-DD    NOMBRE Y APELLIDO          MOTIVO DEL CAMBIO
+------------------------------------------------------------------------------------------------------------------
+--SET VARIABLES
+SET hive.vectorized.execution.enabled=false;
+SET hive.vectorized.execution.reduce.enabled=false;
 
 --EJECUTA EL BORRADO DE LAS TABLAS TEMPORALES AL INICIO
 DROP TABLE IF EXISTS db_desarrollo2021.tmp_otc_t_iot_m2m; --db_temporales
@@ -31,7 +48,7 @@ SELECT
     a.iccid AS iccid, 
     a.created_whem AS created_whem
 FROM db_desarrollo2021.tmp_otc_t_ip a --db_temporales
-INNER JOIN db_desarrollo2021.tmp_otc_t_ip_max b ON a.num_telefonico = b.num_telefonico AND a.created_whem = b.created_whem  --db_temporales
+INNER JOIN (db_desarrollo2021.tmp_otc_t_ip_max) b ON a.num_telefonico = b.num_telefonico AND a.created_whem = b.created_whem  --db_temporales
 GROUP BY 
 a.num_telefonico,
 a.ip_address,
@@ -177,4 +194,4 @@ ip_address,
 imsi,
 iccid
  FROM db_desarrollo2021.tmp_otc_t_iot_m2m_trafico_apn_sin_dup;  --db_temporales
-      
+

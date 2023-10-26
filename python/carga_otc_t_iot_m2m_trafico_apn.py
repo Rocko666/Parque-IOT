@@ -45,22 +45,9 @@ print(lne_dvs())
 print(etq_info("INFO: Mostrar application_id => {}".format(str(app_id))))
 timestart_b = datetime.now()
 try:
-    print(lne_dvs())
     vStp01="Paso 1"
     print(lne_dvs())
-    print(etq_info("Paso [1]: Ejecucion de funcion [tmp_otc_t_ip_max]- CREA LA TABLA TEMPORAL DE IP DE FECHA MAS RECIENTES"))
-    print(lne_dvs())
-    df_tmp_otc_t_ip_max=spark.sql(tmp_otc_t_ip_max(vSchTmp)).cache()
-    df_tmp_otc_t_ip_max.printSchema()
-    ts_step_tbl = datetime.now()
-    df_tmp_otc_t_ip_max.createOrReplaceTempView("tmp_otc_t_ip_max")
-    print(etq_info(msg_t_total_registros_obtenidos("df_tmp_otc_t_ip_max",str(df_tmp_otc_t_ip_max.count())))) 
-    te_step_tbl = datetime.now()
-    print(etq_info(msg_d_duracion_hive("df_tmp_otc_t_ip_max",vle_duracion(ts_step_tbl,te_step_tbl))))
-    
-    vStp01="Paso 2"
-    print(lne_dvs())
-    print(etq_info("Paso [2]: Ejecucion de funcion [tmp_otc_t_ip_uni]- -CREA LA TABLA TEMPORAL DE IP CON REGISTROS UNICOS"))
+    print(etq_info("Paso [1]: Ejecucion de funcion [tmp_otc_t_ip_uni]- -CREA LA TABLA TEMPORAL DE IP CON REGISTROS UNICOS"))
     print(lne_dvs())
     df_tmp_otc_t_ip_uni=spark.sql(tmp_otc_t_ip_uni(vSchTmp)).cache()
     df_tmp_otc_t_ip_uni.printSchema()
@@ -70,9 +57,9 @@ try:
     te_step_tbl = datetime.now()
     print(etq_info(msg_d_duracion_hive("df_tmp_otc_t_ip_uni",vle_duracion(ts_step_tbl,te_step_tbl))))
     
-    vStp01="Paso 3"
+    vStp01="Paso 2"
     print(lne_dvs())
-    print(etq_info("Paso [3]: Ejecucion de funcion [tmp_otc_t_iot_m2m]- CREA LA TABLA TEMPORAL DEL PARQUE IOT M2M"))
+    print(etq_info("Paso [2]: Ejecucion de funcion [tmp_otc_t_iot_m2m]- CREA LA TABLA TEMPORAL DEL PARQUE IOT M2M"))
     print(lne_dvs())
     df_tmp_otc_t_iot_m2m=spark.sql(tmp_otc_t_iot_m2m(vfecha_proceso)).cache()
     df_tmp_otc_t_iot_m2m.printSchema()
@@ -82,9 +69,9 @@ try:
     te_step_tbl = datetime.now()
     print(etq_info(msg_d_duracion_hive("df_tmp_otc_t_iot_m2m",vle_duracion(ts_step_tbl,te_step_tbl))))
     
-    vStp01="Paso 4"
+    vStp01="Paso 3"
     print(lne_dvs())
-    print(etq_info("Paso [4]: Ejecucion de funcion [tmp_otc_t_iot_m2m_trafico_apn]-CREA LA TABLA TEMPORAL DEL PARQUE IOT M2M"))
+    print(etq_info("Paso [3]: Ejecucion de funcion [tmp_otc_t_iot_m2m_trafico_apn]-CREA LA TABLA TEMPORAL DEL PARQUE IOT M2M"))
     print(lne_dvs())
     df_tmp_otc_t_iot_m2m_trafico_apn=spark.sql(tmp_otc_t_iot_m2m_trafico_apn(vfecha_proceso)).cache()
     df_tmp_otc_t_iot_m2m_trafico_apn.printSchema()
@@ -94,9 +81,9 @@ try:
     te_step_tbl = datetime.now()
     print(etq_info(msg_d_duracion_hive("df_tmp_otc_t_iot_m2m_trafico_apn",vle_duracion(ts_step_tbl,te_step_tbl))))
     
-    vStp01="Paso 5"
+    vStp01="Paso 4"
     print(lne_dvs())
-    print(etq_info("Paso [5]: Ejecucion de funcion [tmp_otc_t_iot_m2m_trafico_apn_sin_dup]- CREA LA TABLA TEMPORAL DEL PARQUE IOT M2M SIN DUPLICADOS"))
+    print(etq_info("Paso [4]: Ejecucion de funcion [tmp_otc_t_iot_m2m_trafico_apn_sin_dup]- CREA LA TABLA TEMPORAL DEL PARQUE IOT M2M SIN DUPLICADOS"))
     print(lne_dvs())
     df_tmp_otc_t_iot_m2m_trafico_apn_sin_dup=spark.sql(tmp_otc_t_iot_m2m_trafico_apn_sin_dup(vfecha_proceso)).cache()
     df_tmp_otc_t_iot_m2m_trafico_apn_sin_dup.printSchema()
@@ -106,9 +93,9 @@ try:
     te_step_tbl = datetime.now()
     print(etq_info(msg_d_duracion_hive("df_tmp_otc_t_iot_m2m_trafico_apn_sin_dup",vle_duracion(ts_step_tbl,te_step_tbl))))
     
-    vStp01="Paso 6"
+    vStp01="Paso 5"
     print(lne_dvs())
-    print(etq_info("Paso [6]: Ejecucion de funcion [otc_t_iot_m2m_trafico_apn] - INSERTA LOS REGISTROS EN LA TABLA OTC_T_IOT_M2M_TRAFICO_APN)"))
+    print(etq_info("Paso [5]: Ejecucion de funcion [otc_t_iot_m2m_trafico_apn] - INSERTA LOS REGISTROS EN LA TABLA OTC_T_IOT_M2M_TRAFICO_APN)"))
     print(lne_dvs())
     print(etq_info("REALIZA EL BORRADO DE PARTICIONES CORRESPONDIENTES AL MES DE PROCESO (DESDE EL DIA 1 HASTA DIA CAIDO)"))
     query_truncate = "ALTER TABLE "+vSchRep+"."+vTFinal+" DROP IF EXISTS PARTITION (fecha_proceso = " +vfecha_proceso+ " ) purge"
